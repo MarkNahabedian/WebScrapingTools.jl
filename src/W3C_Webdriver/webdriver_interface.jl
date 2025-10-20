@@ -1,4 +1,4 @@
-export check_response, webdriver_do
+export check_response, webdriver_do, fetch_page
 
 function check_response(cmd::WebdriverCommand, response::HTTP.Response)
     if response.status != 200
@@ -38,5 +38,20 @@ end
 
 function webdriver_check_ready()
     webdriver_do(WebdriverStatus())["value"]["ready"] == true
+end
+
+
+"""
+    fetch_page(uri)
+
+Fetch the dynamic content of the specified web page.
+"""
+fetch_page(uri::String) = fetch_page(URI(uri))
+
+function fetch_page(uri::URI)
+    session = get_gecko_session()
+    webdriver_do(NavigateTo(session, uri))
+    result = webdriver_do(GetPageSource(session))
+    Gumbo.parsehtml(result["value"))
 end
 
