@@ -5,20 +5,45 @@ export WebdriverStatus, NewSession, WebdriverStatus, NewSession,
     GetCurrentURL, NavigateTo, GetPageSource
 
 
+"""
+    WebdriverCommand
+
+Abstract superclass for qll supported Webdriver commands.
+"""
 abstract type WebdriverCommand end
 
 http_method(cmd::WebdriverCommand) = cmd.method
+
+
+"""
+    uri_path(cmd::WebdriverCommand)
+
+Returns the URI path for the request represented by `cmd`.
+"""
+function uri_path end
 
 uri_path(cmd::WebdriverCommand) = URI(GECKO_BASE_URI,
                                       path = join([ GECKO_BASE_URI.path,
                                                     cmd.pathbase
                                                     ], "/"))
 
+
+"""
+    json_payload(cmd::WebdriverCommand)
+
+    Returns the payload for the HTTP request that will be sent for `cmd`.
+"""
 json_payload(cmd::WebdriverCommand) = Dict(
     "capabilities" => Dict()
 )
 
 
+"""
+    WebdriverStatus()
+
+Webdriver status command.
+[https://www.w3.org/TR/webdriver2/#dfn-status](https://www.w3.org/TR/webdriver2/#dfn-status).
+"""
 struct WebdriverStatus <: WebdriverCommand
     method::String
     pathbase::String
@@ -27,6 +52,12 @@ struct WebdriverStatus <: WebdriverCommand
 end
 
 
+"""
+    NewSession()
+
+Webdriver command for creating a new session.
+[https://www.w3.org/TR/webdriver2/#dfn-new-sessions](https://www.w3.org/TR/webdriver2/#dfn-new-sessions).
+"""
 struct NewSession <: WebdriverCommand
     method::String
     pathbase::String
@@ -45,6 +76,12 @@ uri_path(cmd::WebdriverCurrentURL) = URI(GECKO_BASE_URI,
                                                      "/"))
 
 
+"""
+    GetCurrentURL(session_id::String)
+
+Webdriver command to get the current URL.
+[https://www.w3.org/TR/webdriver2/#dfn-get-current-url](https://www.w3.org/TR/webdriver2/#dfn-get-current-url).
+"""
 struct GetCurrentURL <: WebdriverCurrentURL
     method::String
     session_id::String
@@ -53,6 +90,12 @@ struct GetCurrentURL <: WebdriverCurrentURL
 end
 
 
+"""
+    NavigateTo(session_id::String), url)
+
+Webdriver command to navidate to the specified `uri`.
+[https://www.w3.org/TR/webdriver2/#dfn-navigate-to](https://www.w3.org/TR/webdriver2/#dfn-navigate-to}.
+"""
 struct NavigateTo <: WebdriverCurrentURL
     method::String
     session_id::String
@@ -68,6 +111,12 @@ json_payload(cmd::NavigateTo) = Dict(
 )
 
 
+"""
+    GetPageSource(session_id::String)
+
+Webdriver command to get the content of the current web page.
+[https://www.w3.org/TR/webdriver2/#dfn-get-page-source](https://www.w3.org/TR/webdriver2/#dfn-get-page-source).
+"""
 struct GetPageSource <: WebdriverCommand
     method::String
     session_id::String
