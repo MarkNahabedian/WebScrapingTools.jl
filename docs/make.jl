@@ -1,3 +1,10 @@
+using Pkg
+Pkg.activate(; temp = true)
+Pkg.add("Documenter")
+using Documenter
+
+Pkg.activate(joinpath(dirname(dirname(@__FILE__)), "Project.toml"))
+
 using WebScrapingTools
 using Documenter
 
