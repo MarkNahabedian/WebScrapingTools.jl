@@ -52,6 +52,6 @@ function fetch_page(uri::URI)
     session = get_gecko_session()
     webdriver_do(NavigateTo(session, uri))
     result = webdriver_do(GetPageSource(session))
-    Gumbo.parsehtml(result["value"))
+    Gumbo.parsehtml(result["value"])
 end
 
