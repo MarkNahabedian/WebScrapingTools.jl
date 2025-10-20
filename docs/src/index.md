@@ -33,8 +33,12 @@ returns a parsed HTML DOM tree if successful.  Otherwise an error is
 thrown.
 
 
+## Index
+
 ```@index
 ```
+
+## Definitions
 
 ```@autodocs
 Modules = [WebScrapingTools]
