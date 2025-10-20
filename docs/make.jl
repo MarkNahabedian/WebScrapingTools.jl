@@ -6,7 +6,6 @@ using Documenter
 Pkg.activate(joinpath(dirname(dirname(@__FILE__)), "Project.toml"))
 
 using WebScrapingTools
-using Documenter
 
 DocMeta.setdocmeta!(WebScrapingTools, :DocTestSetup, :(using WebScrapingTools); recursive=true)
 
