@@ -3,7 +3,7 @@ using URIs
 using HTTP
 using JSON
 
-export startup, teardown, isactive
+export startup, teardown, isactive, with_webdriver_session
 
 const DEFAULT_GECKODRIVER_PORT = 4444
 const GECKO_BASE_URI = URI("http://localhost:$DEFAULT_GECKODRIVER_PORT")
@@ -41,6 +41,29 @@ function teardown end
 Returns true if the session is ready to serve Webdriver commands.
 """
 function isactive end
+
+
+"""
+    with_webdriver_session(::Function, ::WebdriverSession)
+
+Ensure that the `WebdriverSession` has running processes, then call
+the function.
+
+The sessions processes are terminated once function returns.
+
+The return value of the function is returned.
+"""
+function with_webdriver_session(body::Function, session::WebdriverSession)
+    try
+        if !isactive(session)
+            startup(session)
+        end
+        @assert isactive(session)
+        return body()
+    finally
+        teardown(session)
+    end
+end
 
 
 include("webdriver_commands.jl")
