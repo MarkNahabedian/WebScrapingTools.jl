@@ -59,7 +59,7 @@ function with_webdriver_session(body::Function, session::WebdriverSession)
             startup(session)
         end
         @assert isactive(session)
-        return body()
+        return body(session)
     finally
         teardown(session)
     end

@@ -16,16 +16,17 @@ http_method(cmd::WebdriverCommand) = cmd.method
 
 
 """
-    uri_path(cmd::WebdriverCommand)
+    uri_path(cmd::WebdriverCommand, ::WebdriverSession)
 
 Returns the URI path for the request represented by `cmd`.
 """
 function uri_path end
 
-uri_path(cmd::WebdriverCommand) = URI(GECKO_BASE_URI,
-                                      path = join([ GECKO_BASE_URI.path,
-                                                    cmd.pathbase
-                                                    ], "/"))
+uri_path(cmd::WebdriverCommand, ::WebdriverSession) =
+    URI(GECKO_BASE_URI,
+        path = join([ GECKO_BASE_URI.path,
+                      cmd.pathbase
+                      ], "/"))
 
 
 """
@@ -68,41 +69,40 @@ end
 
 abstract type WebdriverCurrentURL <: WebdriverCommand end
 
-uri_path(cmd::WebdriverCurrentURL) = URI(GECKO_BASE_URI,
-                                         path = join([ GECKO_BASE_URI.path,
-                                                       "session",
-                                                       cmd.session_id,
-                                                       "url" ],
-                                                     "/"))
+uri_path(cmd::WebdriverCurrentURL, session::WebdriverSession) =
+    URI(GECKO_BASE_URI,
+        path = join([ GECKO_BASE_URI.path,
+                      "session",
+                      get_gecko_session(session),
+                      "url" ],
+                    "/"))
 
 
 """
-    GetCurrentURL(session_id::String)
+    GetCurrentURL()
 
 Webdriver command to get the current URL.
 [https://www.w3.org/TR/webdriver2/#dfn-get-current-url](https://www.w3.org/TR/webdriver2/#dfn-get-current-url).
 """
 struct GetCurrentURL <: WebdriverCurrentURL
     method::String
-    session_id::String
 
-    GetCurrentURL(session_id::String) = new("GET", session_id)
+    GetCurrentURL() = new("GET")
 end
 
 
 """
-    NavigateTo(session_id::String), url)
+    NavigateTo(url)
 
 Webdriver command to navidate to the specified `uri`.
 [https://www.w3.org/TR/webdriver2/#dfn-navigate-to](https://www.w3.org/TR/webdriver2/#dfn-navigate-to}.
 """
 struct NavigateTo <: WebdriverCurrentURL
     method::String
-    session_id::String
     uri::URI
 
-    NavigateTo(session_id::String, uri::URI) = new("POST", session_id, uri)
-    NavigateTo(session_id::String, uri::String) = NavigateTo(session_id, URI(uri))
+    NavigateTo(uri::URI) = new("POST", uri)
+    NavigateTo(uri::String) = NavigateTo(URI(uri))
 end
 
 json_payload(cmd::NavigateTo) = Dict(
@@ -112,24 +112,24 @@ json_payload(cmd::NavigateTo) = Dict(
 
 
 """
-    GetPageSource(session_id::String)
+    GetPageSource()
 
 Webdriver command to get the content of the current web page.
 [https://www.w3.org/TR/webdriver2/#dfn-get-page-source](https://www.w3.org/TR/webdriver2/#dfn-get-page-source).
 """
 struct GetPageSource <: WebdriverCommand
     method::String
-    session_id::String
 
-    GetPageSource(session_id::String) = new("GET", session_id)
+    GetPageSource() = new("GET")
 end
 
-uri_path(cmd::GetPageSource) = URI(GECKO_BASE_URI,
-                               path = join([ GECKO_BASE_URI.path,
-                                             "session",
-                                             cmd.session_id,
-                                             "source" ],
-                                           "/"))
+uri_path(cmd::GetPageSource, session::WebdriverSession) =
+    URI(GECKO_BASE_URI,
+        path = join([ GECKO_BASE_URI.path,
+                      "session",
+                      get_gecko_session(session),
+                      "source" ],
+                    "/"))
 
 
 

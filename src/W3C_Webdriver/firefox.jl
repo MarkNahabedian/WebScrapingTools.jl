@@ -14,11 +14,15 @@ FirefoxGeckodriverSession encapsulates the external processes that are
 necessary to scrape web pages using Firefox.
 """
 mutable struct FirefoxGeckodriverSession <: WebdriverSession
+    browser_session_id::Union{Missing, String}
     firefox_process::Union{Missing, Base.Process}
     geckodriver_process::Union{Missing, Base.Process}
 
-    FirefoxGeckodriverSession() = new(missing, missing)
+    FirefoxGeckodriverSession() = new(missing, missing, missing)
 end
+
+browser_session_id(session::FirefoxGeckodriverSession) =
+    session.browser_session_id
 
 function startup(session::FirefoxGeckodriverSession)
     session.firefox_process = run(FIREFOX_CMD, devnull, stdout, stderr; wait=false)
@@ -27,6 +31,7 @@ function startup(session::FirefoxGeckodriverSession)
 end
 
 function teardown(session::FirefoxGeckodriverSession)
+    session.browser_session_id = missing
     if session.geckodriver_process isa Base.Process
         kill(session.geckodriver_process)
         session.geckodriver_process = missing

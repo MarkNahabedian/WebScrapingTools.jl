@@ -20,24 +20,24 @@ function check_response(cmd, response)
 end
 
 
-function webdriver_do(cmd::WebdriverCommand)
+function webdriver_do(cmd::WebdriverCommand, session::WebdriverSession)
     data = JSON.json(json_payload(cmd))
     headers = [
         "content-type" => "application/json; charset=utf-8"
     ]
     println(cmd, "\n",
-            uri_path(cmd), "\n",
+            uri_path(cmd, session), "\n",
             headers, "\n",
             data)
     response = HTTP.request(http_method(cmd),
-                            uri_path(cmd),
+                            uri_path(cmd, session),
                             headers, data)
     check_response(cmd, response)
     JSON.parse(String(response.body))
 end
 
-function webdriver_check_ready()
-    webdriver_do(WebdriverStatus())["value"]["ready"] == true
+function webdriver_check_ready(session::WebdriverSession)
+    webdriver_do(WebdriverStatus(), session)["value"]["ready"] == true
 end
 
 
@@ -46,12 +46,11 @@ end
 
 Fetch the dynamic content of the specified web page.
 """
-fetch_page(uri::String) = fetch_page(URI(uri))
+fetch_page(session::WebdriverSession, uri::String) = fetch_page(session, URI(uri))
 
-function fetch_page(uri::URI)
-    session = get_gecko_session()
-    webdriver_do(NavigateTo(session, uri))
-    result = webdriver_do(GetPageSource(session))
+function fetch_page(session::WebdriverSession, uri::URI)
+    webdriver_do(NavigateTo(uri), session)
+    result = webdriver_do(GetPageSource(), session)
     Gumbo.parsehtml(result["value"])
 end
 
