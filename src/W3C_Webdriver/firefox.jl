@@ -2,7 +2,7 @@
 
 export FirefoxGeckodriverSession
 
-const FIREFOX_CMD = `/Applications/Firefox.app/Contents/MacOS/firefox --headless --disable-gpu --safe-mode`
+const FIREFOX_CMD = `firefox --headless --disable-gpu --safe-mode`
 
 const GECKODRIVER_CMD = `geckodriver`
 
