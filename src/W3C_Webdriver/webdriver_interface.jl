@@ -25,10 +25,9 @@ function webdriver_do(cmd::WebdriverCommand, session::WebdriverSession)
     headers = [
         "content-type" => "application/json; charset=utf-8"
     ]
-    println(cmd, "\n",
-            uri_path(cmd, session), "\n",
-            headers, "\n",
-            data)
+    @info("webdriver_do", cmd,
+          path = uri_path(cmd, session),
+          headers, data)
     response = HTTP.request(http_method(cmd),
                             uri_path(cmd, session),
                             headers, data)

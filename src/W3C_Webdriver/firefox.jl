@@ -2,7 +2,7 @@
 
 export FirefoxGeckodriverSession
 
-const FIREFOX_CMD = `/Applications/Firefox.app/Contents/MacOS/firefox --headless --disable-gpu`
+const FIREFOX_CMD = `/Applications/Firefox.app/Contents/MacOS/firefox --headless --disable-gpu --safe-mode`
 
 const GECKODRIVER_CMD = `geckodriver`
 
@@ -25,8 +25,12 @@ browser_session_id(session::FirefoxGeckodriverSession) =
     session.browser_session_id
 
 function startup(session::FirefoxGeckodriverSession)
-    session.firefox_process = run(FIREFOX_CMD, devnull, stdout, stderr; wait=false)
-    session.geckodriver_process = run(GECKODRIVER_CMD, devnull, stdout, stderr; wait=false)
+    io = Logging2.LineBufferedIO(Logging2.LoggingStream(current_logger();
+                                                        id="W3C_Webdriver",
+                                                        level=Logging.Info))
+    session.firefox_process = run(FIREFOX_CMD, devnull, io, io;
+                                  wait=false)
+    session.geckodriver_process = run(GECKODRIVER_CMD, devnull, io, io; wait=false)
     session
 end
 

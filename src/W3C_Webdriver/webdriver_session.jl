@@ -9,7 +9,7 @@ function get_gecko_session(session::WebdriverSession)
     end
     # @assert webdriver_check_ready(session)
     result = webdriver_do(NewSession(), session)
-    println(result)
+    @info("get_gecko_session", result)
     session.browser_session_id = result["value"]["sessionId"]
     return session.browser_session_id
 end
