@@ -3,7 +3,8 @@
 
 export WebdriverStatus, NewSession, WebdriverStatus, NewSession,
     GetCurrentURL, NavigateTo, GetPageSource, FindElement,
-    FindElements, ElementClick
+    FindElements, ElementClick, GetElementText, GetWindowHandles,
+    GetTitle, CloseWindow
 
 
 """
@@ -195,6 +196,7 @@ json_payload(cmd::FindElements) = Dict(
     ElementClick(element_id::WebdriverElement)
 
 Clicks on the specified element.
+[https://www.w3.org/TR/webdriver2/#dfn-element-click](https://www.w3.org/TR/webdriver2/#dfn-element-click)
 """
 struct ElementClick <: WebdriverCommand
     method::String
@@ -211,5 +213,93 @@ uri_path(cmd::ElementClick, session::WebdriverSession) =
                       "element",
                       cmd.element_id.element_id,
                       "click" ],
+                    "/"))
+
+
+"""
+    GetElementText(element_id::WebdriverElement)
+
+Returns the descendant text of the element identified by `element_id`.
+[https://www.w3.org/TR/webdriver2/#dfn-get-element-text](https://www.w3.org/TR/webdriver2/#dfn-get-element-text)
+"""
+struct GetElementText <: WebdriverCommand
+    method::String
+    element_id::WebdriverElement
+
+    GetElementText(element_id::WebdriverElement) = new("GET", element_id)
+end
+
+uri_path(cmd::GetElementText, session::WebdriverSession) =
+    URI(GECKO_BASE_URI,
+        path = join([ GECKO_BASE_URI.path,
+                      "session",
+                      get_gecko_session(session),
+                      "element",
+                      cmd.element_id.element_id,
+                      "text" ],
+                    "/"))
+
+
+"""
+    GetWindowHandles()
+
+Returns the handles of the open browser windows.
+[https://www.w3.org/TR/webdriver2/#get-window-handles](https://www.w3.org/TR/webdriver2/#get-window-handles)
+"""
+struct GetWindowHandles <: WebdriverCommand
+    method::String
+
+    GetWindowHandles() = new("GET")
+end
+
+uri_path(cmd::GetWindowHandles, session::WebdriverSession) =
+    URI(GECKO_BASE_URI,
+        path = join([ GECKO_BASE_URI.path,
+                      "session",
+                      get_gecko_session(session),
+                      "window",
+                      "handles"],
+                    "/"))
+
+
+"""
+    GetTitle()
+
+Gets the page title.
+[https://www.w3.org/TR/webdriver2/#get-title](https://www.w3.org/TR/webdriver2/#get-title)
+"""
+struct GetTitle  <: WebdriverCommand
+    method::String
+
+    GetTitle() = new("GET")
+end
+
+uri_path(cmd::GetTitle, session::WebdriverSession) =
+    URI(GECKO_BASE_URI,
+        path = join([ GECKO_BASE_URI.path,
+                      "session",
+                      get_gecko_session(session),
+                      "title"],
+                    "/"))
+
+
+"""
+    CloseWindow()
+
+Closes the session's top level browsing context.
+[https://www.w3.org/TR/webdriver2/#close-window](https://www.w3.org/TR/webdriver2/#close-window)
+"""
+struct CloseWindow <: WebdriverCommand
+    method::String
+
+    CloseWindow() = new("DELETE")
+end
+
+uri_path(cmd::CloseWindow, session::WebdriverSession) =
+    URI(GECKO_BASE_URI,
+        path = join([ GECKO_BASE_URI.path,
+                      "session",
+                      get_gecko_session(session),
+                      "window"],
                     "/"))
 

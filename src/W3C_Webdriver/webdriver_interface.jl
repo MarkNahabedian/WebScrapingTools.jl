@@ -1,5 +1,6 @@
 export check_response, webdriver_do, fetch_page,
-    WebdriverElement, find_element, find_elements
+    WebdriverElement, find_element, find_elements,
+    element_text, get_window_handles, get_title
 
 function check_response(cmd::WebdriverCommand, response::HTTP.Response)
     if response.status != 200
@@ -56,7 +57,7 @@ end
 
 
 """
-    find_element(session::WebdriverSession, locator::Locator)
+    find_element(session::WebdriverSession, locator::Locator)::WebdriverElement
 
 Returns a reference (as a [`WebdriverElement`](@ref)) to a single element.
 an error is thrown if no element matches `locator`.
@@ -70,7 +71,7 @@ end
 
 
 """
-    find_elements(session::WebdriverSession, locator::Locator)
+    find_elements(session::WebdriverSession, locator::Locator)::Vector{WebdriverElement}
 
 Returns a list of element references (as [`WebdriverElement`](@ref)s) to
 alll of the elements that match `locator`.
@@ -82,5 +83,42 @@ function find_elements(session::WebdriverSession, locator::Locator)
     map(value) do v
         WebdriverElement(v[only(keys(v))])
     end
+end
+
+
+"""
+    element_text(session::WebdriverSession, element::WebdriverElement)
+
+Returns the descendant text of the specified element.
+
+See [`GetElementText`](@ref)
+"""
+function element_text(session::WebdriverSession, element::WebdriverElement)
+    result = webdriver_do(GetElementText(element), session)
+    return result["value"]
+end
+
+
+"""
+    get_window_handles(session::WebdriverSession)
+
+Returns a list of handles of open browser windows.
+
+See [`GetWindowHandles`](@ref)
+"""
+function get_window_handles(session::WebdriverSession)::Vector{WindowHandle}
+    map(WindowHandle, webdriver_do(GetWindowHandles(), session)["value"])
+end
+
+
+"""
+    get_title(session)
+
+Returns the title of the curre nt page.
+See [`GetTitle`](@ref)
+"""
+function get_title(session)::String
+    result = webdriver_do(GetTitle(), session)
+    return result["value"]
 end
 

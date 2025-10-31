@@ -1,5 +1,5 @@
-export Locator, CSSSelector,
-    WebdriverElement
+export Locator, CSSSelector
+
 
 """
 L`Locator`s are used by various Webdriver commands that search a
@@ -17,13 +17,4 @@ struct CSSSelector <: Locator
 end
 
 locator_strategy(::CSSSelector) = "css selector"
-
-
-"""
-WebdriverElement encapsulates an element id.  These are used to
-identify an element to Webdriver.
-"""
-struct WebdriverElement
-    element_id::String
-end
 

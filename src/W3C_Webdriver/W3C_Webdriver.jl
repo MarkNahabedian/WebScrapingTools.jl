@@ -7,7 +7,8 @@ using Logging2
 using Gumbo
 using Cascadia
 
-export startup, teardown, isactive, with_webdriver_session
+export startup, teardown, isactive, with_webdriver_session,
+        WebdriverElement, WindowHandle
 
 const DEFAULT_GECKODRIVER_PORT = 4444
 const GECKO_BASE_URI = URI("http://localhost:$DEFAULT_GECKODRIVER_PORT")
@@ -67,6 +68,23 @@ function with_webdriver_session(body::Function, session::WebdriverSession)
     finally
         teardown(session)
     end
+end
+
+
+"""
+WebdriverElement encapsulates an element id.  These are used to
+identify an element to Webdriver.
+"""
+struct WebdriverElement
+    element_id::String
+end
+
+
+"""
+WindowHandle encapsulates the handle of a browser window."
+"""
+struct WindowHandle
+    handle
 end
 
 
