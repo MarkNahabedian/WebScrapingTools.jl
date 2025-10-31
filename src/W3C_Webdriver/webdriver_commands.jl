@@ -3,7 +3,7 @@
 
 export WebdriverStatus, NewSession, WebdriverStatus, NewSession,
     GetCurrentURL, NavigateTo, GetPageSource, FindElement,
-    FindElements
+    FindElements, ElementClick
 
 
 """
@@ -189,4 +189,27 @@ json_payload(cmd::FindElements) = Dict(
     "using" => locator_strategy(cmd.locator),
     "value" => cmd.locator.css_selector
 )
+
+
+"""
+    ElementClick(element_id::WebdriverElement)
+
+Clicks on the specified element.
+"""
+struct ElementClick <: WebdriverCommand
+    method::String
+    element_id::WebdriverElement
+
+    ElementClick(element_id::WebdriverElement) = new("POST", element_id)
+end
+
+uri_path(cmd::ElementClick, session::WebdriverSession) =
+    URI(GECKO_BASE_URI,
+        path = join([ GECKO_BASE_URI.path,
+                      "session",
+                      get_gecko_session(session),
+                      "element",
+                      element_id.element_id,
+                      "click" ],
+                    "/"))
 

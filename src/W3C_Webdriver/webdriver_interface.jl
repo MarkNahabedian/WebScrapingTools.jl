@@ -56,15 +56,6 @@ end
 
 
 """
-WebdriverElement encapsulates an element id.  These are used to
-identify an element to Webdriver.
-"""
-struct WebdriverElement
-    element_id::String
-end
-
-
-"""
     find_element(session::WebdriverSession, locator::Locator)
 
 Returns a reference (as a [`WebdriverElement`](@ref)) to a single element.
