@@ -209,7 +209,7 @@ uri_path(cmd::ElementClick, session::WebdriverSession) =
                       "session",
                       get_gecko_session(session),
                       "element",
-                      element_id.element_id,
+                      cmd.element_id.element_id,
                       "click" ],
                     "/"))
 
