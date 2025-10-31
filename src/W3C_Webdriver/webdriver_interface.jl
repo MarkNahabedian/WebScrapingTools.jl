@@ -1,4 +1,5 @@
-export check_response, webdriver_do, fetch_page
+export check_response, webdriver_do, fetch_page,
+    WebdriverElement, find_element
 
 function check_response(cmd::WebdriverCommand, response::HTTP.Response)
     if response.status != 200
@@ -51,5 +52,26 @@ function fetch_page(session::WebdriverSession, uri::URI)
     webdriver_do(NavigateTo(uri), session)
     result = webdriver_do(GetPageSource(), session)
     Gumbo.parsehtml(result["value"])
+end
+
+
+"""
+WebdriverElement encapsulates an element id.  These are used to
+identify an element to Webdriver.
+"""
+struct WebdriverElement
+    element_id::String
+end
+
+
+"""
+    find_element(session::WebdriverSession, locator::Locator)
+
+Returns a reference (as a [`WebdriverElement`](@ref)) to a single element.
+an error is thrown if no element matches `locator`.
+"""
+function find_element(session::WebdriverSession, locator::Locator)
+    value = webdriver_do(FindElement(locator), session)["value"]
+    return WebdriverElement(value[only(keys(value))])
 end
 

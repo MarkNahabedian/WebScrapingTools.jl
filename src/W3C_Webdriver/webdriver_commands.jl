@@ -2,7 +2,8 @@
 # See https://www.w3.org/TR/webdriver2
 
 export WebdriverStatus, NewSession, WebdriverStatus, NewSession,
-    GetCurrentURL, NavigateTo, GetPageSource
+    GetCurrentURL, NavigateTo, GetPageSource, FindElement,
+    FindElements
 
 
 """
@@ -132,4 +133,60 @@ uri_path(cmd::GetPageSource, session::WebdriverSession) =
                     "/"))
 
 
+
+
+"""
+    FindElement(locator)
+
+Webdriver command to find the first element that matches `locator`.
+[https://www.w3.org/TR/webdriver2/#find-element](https://www.w3.org/TR/webdriver2/#find-element)
+"""
+struct FindElement <: WebdriverCommand
+    method::String
+    locator::Locator
+
+    FindElement(locator) = new("POST", locator)
+end
+
+uri_path(cmd::FindElement, session::WebdriverSession) =
+    URI(GECKO_BASE_URI,
+        path = join([ GECKO_BASE_URI.path,
+                      "session",
+                      get_gecko_session(session),
+                      "element" ],
+                    "/"))
+
+json_payload(cmd::FindElement) = Dict(
+    "capabilities" => Dict(),
+    "using" => locator_strategy(cmd.locator),
+    "value" => cmd.locator.css_selector
+)
+
+
+"""
+    FindElements(locator)
+
+Webdriver command to find multiple elements.
+[https://www.w3.org/TR/webdriver2/#find-elements](https://www.w3.org/TR/webdriver2/#find-elements)
+"""
+struct FindElements <: WebdriverCommand
+    method::String
+    locator::Locator
+
+    FindElements(locator) = new("POST", locator)
+end
+
+uri_path(cmd::FindElements, session::WebdriverSession) =
+    URI(GECKO_BASE_URI,
+        path = join([ GECKO_BASE_URI.path,
+                      "session",
+                      get_gecko_session(session),
+                      "element" ],
+                    "/"))
+
+json_payload(cmd::FindElements) = Dict(
+    "capabilities" => Dict(),
+    "using" => locator_strategy(cmd.locator),
+    "value" => cmd.locator.css_selector
+)
 

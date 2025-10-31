@@ -70,6 +70,7 @@ function with_webdriver_session(body::Function, session::WebdriverSession)
 end
 
 
+include("locators.jl")
 include("webdriver_commands.jl")
 include("webdriver_interface.jl")
 include("webdriver_session.jl")
