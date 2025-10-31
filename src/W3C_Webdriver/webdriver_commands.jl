@@ -181,7 +181,7 @@ uri_path(cmd::FindElements, session::WebdriverSession) =
         path = join([ GECKO_BASE_URI.path,
                       "session",
                       get_gecko_session(session),
-                      "element" ],
+                      "elements" ],
                     "/"))
 
 json_payload(cmd::FindElements) = Dict(

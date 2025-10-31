@@ -1,5 +1,5 @@
 export check_response, webdriver_do, fetch_page,
-    WebdriverElement, find_element
+    WebdriverElement, find_element, find_elements
 
 function check_response(cmd::WebdriverCommand, response::HTTP.Response)
     if response.status != 200
@@ -69,9 +69,27 @@ end
 
 Returns a reference (as a [`WebdriverElement`](@ref)) to a single element.
 an error is thrown if no element matches `locator`.
+
+Uses the [`FindElement`](@ref) command.
 """
 function find_element(session::WebdriverSession, locator::Locator)
     value = webdriver_do(FindElement(locator), session)["value"]
     return WebdriverElement(value[only(keys(value))])
+end
+
+
+"""
+    find_elements(session::WebdriverSession, locator::Locator)
+
+Returns a list of element references (as [`WebdriverElement`](@ref)s) to
+alll of the elements that match `locator`.
+
+Uses the [`FindElements`](@ref) command.
+"""
+function find_elements(session::WebdriverSession, locator::Locator)
+    value = webdriver_do(FindElements(locator), session)["value"]
+    map(value) do v
+        WebdriverElement(v[only(keys(v))])
+    end
 end
 
